@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  odoo:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "${ODOO_PORT}:8069"
+    volumes:
+      - ./enterprise:/mnt/enterprise-addons
+      - ./extra_addons:/mnt/extra-addons
+      - ./odoo.conf:/etc/odoo/odoo.conf
+      - aboudisa-odoo-data:/var/lib/odoo
+      - aboudisa-odoo-logs:/var/log/odoo
+    environment:
+      - HOST=${ODOO_DB_HOST}
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
+      - ADMIN_PASSWD=${ODOO_MASTER_PASSWORD}
+    command: odoo -c /etc/odoo/odoo.conf
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - aboudisa-db-data:/var/lib/postgresql/data
+volumes:
+  aboudisa-odoo-data:
+  aboudisa-db-data:
+  aboudisa-odoo-logs:
