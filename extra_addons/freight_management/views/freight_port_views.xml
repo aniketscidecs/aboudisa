@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Port list View -->
+        <record id="view_freight_port_list" model="ir.ui.view">
+            <field name="name">freight.port.list</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <list string="Ports" default_order="name">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="country_id"/>
+                    <field name="state_id"/>
+                    <field name="air_supported" widget="boolean_toggle"/>
+                    <field name="ocean_supported" widget="boolean_toggle"/>
+                    <field name="land_supported" widget="boolean_toggle"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Port Form View -->
+        <record id="view_freight_port_form" model="ir.ui.view">
+            <field name="name">freight.port.form</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <form string="Port">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Port Name"/>
+                            </h1>
+                            <h2>
+                                <field name="code" placeholder="Port Code"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group name="location_info" string="Location Information">
+                                <field name="country_id" options="{'no_create': True}"/>
+                                <field name="state_id" options="{'no_create': True}" domain="[('country_id', '=', country_id)]"/>
+                                <field name="timezone"/>
+                            </group>
+                            <group name="transport_modes" string="Supported Transport Modes">
+                                <field name="air_supported"/>
+                                <field name="ocean_supported"/>
+                                <field name="land_supported"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group name="coordinates" string="Coordinates">
+                                <field name="latitude"/>
+                                <field name="longitude"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Additional information about the port..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Port Search View -->
+        <record id="view_freight_port_search" model="ir.ui.view">
+            <field name="name">freight.port.search</field>
+            <field name="model">freight.port</field>
+            <field name="arch" type="xml">
+                <search string="Search Ports">
+                    <field name="name" string="Port" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="country_id"/>
+                    <field name="state_id"/>
+                    <separator/>
+                    <filter string="Air Ports" name="air_ports" domain="[('air_supported', '=', True)]"/>
+                    <filter string="Ocean Ports" name="ocean_ports" domain="[('ocean_supported', '=', True)]"/>
+                    <filter string="Land Ports" name="land_ports" domain="[('land_supported', '=', True)]"/>
+                    <separator/>
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Country" name="group_country" context="{'group_by': 'country_id'}"/>
+                        <filter string="State" name="group_state" context="{'group_by': 'state_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Port Action -->
+        <record id="action_freight_port" model="ir.actions.act_window">
+            <field name="name">Ports</field>
+            <field name="res_model">freight.port</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first port!
+                </p>
+                <p>
+                    Configure ports that will be used in your freight operations.
+                    You can specify which transport modes each port supports.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

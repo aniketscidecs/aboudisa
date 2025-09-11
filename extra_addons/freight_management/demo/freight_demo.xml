@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- Demo Ports for Saudi Arabia and Region -->
+    <record id="port_jeddah" model="freight.port">
+        <field name="code">SAJED</field>
+        <field name="name">Jeddah Islamic Port</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="ocean_supported">True</field>
+        <field name="land_supported">True</field>
+        <field name="air_supported">False</field>
+    </record>
+
+    <record id="port_dammam" model="freight.port">
+        <field name="code">SADAM</field>
+        <field name="name">King Abdul Aziz Port Dammam</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="ocean_supported">True</field>
+        <field name="land_supported">True</field>
+        <field name="air_supported">False</field>
+    </record>
+
+    <record id="port_riyadh_air" model="freight.port">
+        <field name="code">RUH</field>
+        <field name="name">King Khalid International Airport</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="ocean_supported">False</field>
+        <field name="land_supported">True</field>
+        <field name="air_supported">True</field>
+    </record>
+
+    <!-- Demo Airlines -->
+    <record id="airline_saudia" model="freight.airline">
+        <field name="code">SV</field>
+        <field name="name">Saudia Cargo</field>
+        <field name="country_id" ref="base.sa"/>
+        <field name="iata_code">SV</field>
+        <field name="icao_code">SVA</field>
+        <field name="airline_type">cargo</field>
+    </record>
+
+    <record id="airline_emirates" model="freight.airline">
+        <field name="code">EK</field>
+        <field name="name">Emirates SkyCargo</field>
+        <field name="country_id" ref="base.ae"/>
+        <field name="iata_code">EK</field>
+        <field name="icao_code">UAE</field>
+        <field name="airline_type">mixed</field>
+    </record>
+
+    <!-- Demo Vessels -->
+    <record id="vessel_maersk_demo" model="freight.vessel">
+        <field name="code">MAERSK001</field>
+        <field name="name">Maersk Sentosa</field>
+        <field name="country_id" ref="base.dk"/>
+        <field name="vessel_type">container</field>
+        <field name="global_zone">Middle East - Asia</field>
+    </record>
+
+    <!-- Specialized Containers for ABOUDi Industries -->
+    <record id="container_flat_rack" model="freight.container">
+        <field name="code">40FR</field>
+        <field name="name">40ft Flat Rack Container</field>
+        <field name="is_container">True</field>
+        <field name="container_type">flat_rack</field>
+        <field name="size">40</field>
+        <field name="max_weight">45000</field>
+        <field name="length">12.19</field>
+        <field name="width">2.44</field>
+        <field name="height">2.59</field>
+        <field name="ocean_compatible">True</field>
+        <field name="land_compatible">True</field>
+        <field name="air_compatible">False</field>
+        <field name="description">Ideal for over-dimensional cargo like steel beams and oil equipment</field>
+    </record>
+
+    <record id="package_steel_crate" model="freight.container">
+        <field name="code">STEEL_CRATE</field>
+        <field name="name">Steel Equipment Crate</field>
+        <field name="is_container">False</field>
+        <field name="container_type">package</field>
+        <field name="max_weight">5000</field>
+        <field name="length">3.0</field>
+        <field name="width">2.0</field>
+        <field name="height">2.5</field>
+        <field name="ocean_compatible">True</field>
+        <field name="land_compatible">True</field>
+        <field name="air_compatible">True</field>
+        <field name="description">Custom crate for steel industry equipment</field>
+    </record>
+
+</data>
+</odoo>

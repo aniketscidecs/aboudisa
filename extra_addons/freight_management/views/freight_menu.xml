@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Window Action for Ports - MUST be defined before menu references it -->
+        <record id="action_freight_port" model="ir.actions.act_window">
+            <field name="name">Ports</field>
+            <field name="res_model">freight.port</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first port configuration!
+                </p>
+                <p>
+                    Define ports for your freight forwarding operations.
+                </p>
+            </field>
+        </record>
+
+        <!-- Main Freight Management Menu -->
+        <menuitem 
+            id="menu_freight_management_root"
+            name="Freight Management"
+            web_icon="freight_management,static/description/icon.png"
+            sequence="10"/>
+
+        <!-- Shipments Menu -->
+        <menuitem id="menu_freight_shipments"
+                  name="Shipments"
+                  parent="menu_freight_management_root"
+                  sequence="10"/>
+
+        <!-- Configuration Menu -->
+        <menuitem id="menu_freight_configuration"
+                  name="Configuration"
+                  parent="menu_freight_management_root"
+                  action="action_freight_port"
+                  sequence="100"/>
+
+        <!-- Ports Menu -->
+        <menuitem id="menu_freight_ports"
+                  name="Ports"
+                  parent="menu_freight_configuration"
+                  action="action_freight_port"
+                  sequence="10"/>
+
+        <!-- Vessels Menu -->
+        <menuitem id="menu_freight_vessels"
+                  name="Vessels"
+                  parent="menu_freight_configuration"
+                  action="action_freight_vessel"
+                  sequence="20"/>
+
+        <!-- Airlines Menu -->
+        <menuitem id="menu_freight_airlines"
+                  name="Airlines"
+                  parent="menu_freight_configuration"
+                  action="action_freight_airline"
+                  sequence="30"/>
+
+        <!-- Incoterms Menu -->
+        <menuitem id="menu_freight_incoterms"
+                  name="Incoterms"
+                  parent="menu_freight_configuration"
+                  action="action_freight_incoterm"
+                  sequence="40"/>
+
+        <!-- Containers Menu -->
+        <menuitem id="menu_freight_containers"
+                  name="Containers/Packages"
+                  parent="menu_freight_configuration"
+                  action="action_freight_container"
+                  sequence="50"/>
+
+    </data>
+</odoo>

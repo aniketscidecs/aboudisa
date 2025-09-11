@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Airline list View -->
+        <record id="view_freight_airline_list" model="ir.ui.view">
+            <field name="name">freight.airline.list</field>
+            <field name="model">freight.airline</field>
+            <field name="arch" type="xml">
+                <list string="Airlines" default_order="name">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="country_id"/>
+                    <field name="iata_code"/>
+                    <field name="icao_code"/>
+                    <field name="airline_type"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Airline Form View -->
+        <record id="view_freight_airline_form" model="ir.ui.view">
+            <field name="name">freight.airline.form</field>
+            <field name="model">freight.airline</field>
+            <field name="arch" type="xml">
+                <form string="Airline">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Airline Name"/>
+                            </h1>
+                            <h2>
+                                <field name="code" placeholder="Airline Code"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group name="basic_info" string="Basic Information">
+                                <field name="country_id" options="{'no_create': True}"/>
+                                <field name="airline_type"/>
+                            </group>
+                            <group name="codes" string="Airline Codes">
+                                <field name="iata_code"/>
+                                <field name="icao_code"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Contact Information" name="contact">
+                                <group>
+                                    <group name="contact_details" string="Contact Details">
+                                        <field name="website" widget="url"/>
+                                        <field name="phone" widget="phone"/>
+                                        <field name="email" widget="email"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Operations" name="operations">
+                                <group>
+                                    <group name="service_areas" string="Service Areas">
+                                        <field name="domestic_service"/>
+                                        <field name="international_service"/>
+                                    </group>
+                                    <group name="fleet_info" string="Fleet Information">
+                                        <field name="fleet_size"/>
+                                        <field name="cargo_fleet_size"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group name="hubs" string="Hub Airports">
+                                        <field name="hub_airport_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Additional information about the airline..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Airline Search View -->
+        <record id="view_freight_airline_search" model="ir.ui.view">
+            <field name="name">freight.airline.search</field>
+            <field name="model">freight.airline</field>
+            <field name="arch" type="xml">
+                <search string="Search Airlines">
+                    <field name="name" string="Airline" filter_domain="['|', '|', ('name', 'ilike', self), ('code', 'ilike', self), ('iata_code', 'ilike', self)]"/>
+                    <field name="country_id"/>
+                    <field name="airline_type"/>
+                    <field name="iata_code"/>
+                    <field name="icao_code"/>
+                    <separator/>
+                    <filter string="Cargo Airlines" name="cargo_airlines" domain="[('airline_type', '=', 'cargo')]"/>
+                    <filter string="Mixed Airlines" name="mixed_airlines" domain="[('airline_type', '=', 'mixed')]"/>
+                    <filter string="Charter Airlines" name="charter_airlines" domain="[('airline_type', '=', 'charter')]"/>
+                    <separator/>
+                    <filter string="Domestic Service" name="domestic" domain="[('domestic_service', '=', True)]"/>
+                    <filter string="International Service" name="international" domain="[('international_service', '=', True)]"/>
+                    <separator/>
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Country" name="group_country" context="{'group_by': 'country_id'}"/>
+                        <filter string="Airline Type" name="group_type" context="{'group_by': 'airline_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Airline Action -->
+        <record id="action_freight_airline" model="ir.actions.act_window">
+            <field name="name">Airlines</field>
+            <field name="res_model">freight.airline</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first airline!
+                </p>
+                <p>
+                    Configure airlines that will be used in your air freight operations.
+                    Track airline details, codes, and operational information.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

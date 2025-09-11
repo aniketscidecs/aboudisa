@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_freight_port_user,freight.port.user,model_freight_port,base.group_user,1,1,1,1
+access_freight_port_manager,freight.port.manager,model_freight_port,base.group_system,1,1,1,1
+access_freight_vessel_user,freight.vessel.user,model_freight_vessel,base.group_user,1,1,1,1
+access_freight_vessel_manager,freight.vessel.manager,model_freight_vessel,base.group_system,1,1,1,1
+access_freight_airline_user,freight.airline.user,model_freight_airline,base.group_user,1,1,1,1
+access_freight_airline_manager,freight.airline.manager,model_freight_airline,base.group_system,1,1,1,1
+access_freight_incoterm_user,freight.incoterm.user,model_freight_incoterm,base.group_user,1,0,0,0
+access_freight_incoterm_manager,freight.incoterm.manager,model_freight_incoterm,base.group_system,1,1,1,1
+access_freight_container_user,freight.container.user,model_freight_container,base.group_user,1,1,1,1
+access_freight_container_manager,freight.container.manager,model_freight_container,base.group_system,1,1,1,1
