@@ -66,9 +66,7 @@ class FreightCostLine(models.Model):
     
     amount = fields.Monetary(
         string='Total Amount',
-        currency_field='currency_id',
-        compute='_compute_amount',
-        store=True
+        currency_field='currency_id'
     )
     
     currency_id = fields.Many2one(
@@ -89,11 +87,6 @@ class FreightCostLine(models.Model):
         compute='_compute_invoiced',
         store=True
     )
-
-    @api.depends('quantity', 'unit_price')
-    def _compute_amount(self):
-        for line in self:
-            line.amount = line.quantity * line.unit_price
 
     @api.depends('invoice_line_id')
     def _compute_invoiced(self):
