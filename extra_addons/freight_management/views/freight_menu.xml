@@ -25,53 +25,90 @@
             web_icon="freight_management,static/description/icon.png"
             sequence="10"/>
 
+        <!-- Main Operations Menu -->
+        <menuitem 
+            id="menu_freight_operations"
+            name="Operations"
+            parent="menu_freight_management_root"
+            sequence="10"/>
+
         <!-- Shipments Menu -->
-        <menuitem id="menu_freight_shipments"
-                  name="Shipments"
-                  parent="menu_freight_management_root"
-                  sequence="10"/>
+        <menuitem 
+            id="menu_freight_shipments"
+            name="Shipments"
+            parent="menu_freight_operations"
+            action="action_freight_shipment"
+            sequence="10"/>
+
+        <!-- Quotations Menu -->
+        <menuitem 
+            id="menu_freight_quotations"
+            name="Quotations"
+            parent="menu_freight_operations"
+            action="action_freight_quotation"
+            sequence="20"/>
+
+        <!-- Cost Management Menu -->
+        <menuitem 
+            id="menu_freight_cost_management"
+            name="Cost Management"
+            parent="menu_freight_management_root"
+            sequence="20"/>
+
+        <!-- Cost Lines Menu -->
+        <menuitem 
+            id="menu_freight_cost_lines"
+            name="Cost Lines"
+            parent="menu_freight_cost_management"
+            action="action_freight_cost_line"
+            sequence="10"/>
 
         <!-- Configuration Menu -->
-        <menuitem id="menu_freight_configuration"
-                  name="Configuration"
-                  parent="menu_freight_management_root"
-                  action="action_freight_port"
-                  sequence="100"/>
+        <menuitem 
+            id="menu_freight_configuration"
+            name="Configuration"
+            parent="menu_freight_management_root"
+            sequence="90"/>
 
         <!-- Ports Menu -->
-        <menuitem id="menu_freight_ports"
-                  name="Ports"
-                  parent="menu_freight_configuration"
-                  action="action_freight_port"
-                  sequence="10"/>
+        <menuitem 
+            id="menu_freight_ports"
+            name="Ports"
+            parent="menu_freight_configuration"
+            action="action_freight_port"
+            sequence="10"/>
 
         <!-- Vessels Menu -->
-        <menuitem id="menu_freight_vessels"
-                  name="Vessels"
-                  parent="menu_freight_configuration"
-                  action="action_freight_vessel"
-                  sequence="20"/>
+        <menuitem 
+            id="menu_freight_vessels"
+            name="Vessels"
+            parent="menu_freight_configuration"
+            action="action_freight_vessel"
+            sequence="20"/>
 
         <!-- Airlines Menu -->
-        <menuitem id="menu_freight_airlines"
-                  name="Airlines"
-                  parent="menu_freight_configuration"
-                  action="action_freight_airline"
-                  sequence="30"/>
+        <menuitem 
+            id="menu_freight_airlines"
+            name="Airlines"
+            parent="menu_freight_configuration"
+            action="action_freight_airline"
+            sequence="30"/>
 
         <!-- Incoterms Menu -->
-        <menuitem id="menu_freight_incoterms"
-                  name="Incoterms"
-                  parent="menu_freight_configuration"
-                  action="action_freight_incoterm"
-                  sequence="40"/>
+        <menuitem 
+            id="menu_freight_incoterms"
+            name="Incoterms"
+            parent="menu_freight_configuration"
+            action="action_freight_incoterm"
+            sequence="40"/>
 
         <!-- Containers Menu -->
-        <menuitem id="menu_freight_containers"
-                  name="Containers/Packages"
-                  parent="menu_freight_configuration"
-                  action="action_freight_container"
-                  sequence="50"/>
+        <menuitem 
+            id="menu_freight_containers"
+            name="Containers/Packages"
+            parent="menu_freight_configuration"
+            action="action_freight_container"
+            sequence="50"/>
 
     </data>
 </odoo>

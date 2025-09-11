@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cost Line List View -->
+    <record id="view_freight_cost_line_list" model="ir.ui.view">
+        <field name="name">freight.cost.line.list</field>
+        <field name="model">freight.cost.line</field>
+        <field name="arch" type="xml">
+            <list string="Cost Lines">
+                <field name="shipment_id"/>
+                <field name="quotation_id"/>
+                <field name="cost_type"/>
+                <field name="cost_category"/>
+                <field name="description"/>
+                <field name="amount" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="partner_id"/>
+                <field name="invoice_line_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Cost Line Form View -->
+    <record id="view_freight_cost_line_form" model="ir.ui.view">
+        <field name="name">freight.cost.line.form</field>
+        <field name="model">freight.cost.line</field>
+        <field name="arch" type="xml">
+            <form string="Cost Line">
+                <sheet>
+                    <group>
+                        <group name="basic_info" string="Basic Information">
+                            <field name="shipment_id"/>
+                            <field name="quotation_id"/>
+                            <field name="cost_type"/>
+                            <field name="cost_category"/>
+                        </group>
+                        <group name="financial_info" string="Financial Information">
+                            <field name="currency_id"/>
+                            <field name="amount"/>
+                            <field name="partner_id" invisible="cost_type != 'buy'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Detailed description of this cost item..."/>
+                    </group>
+                    <group name="invoice_info" string="Invoice Information">
+                        <field name="invoice_line_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cost Line Action -->
+    <record id="action_freight_cost_line" model="ir.actions.act_window">
+        <field name="name">Cost Lines</field>
+        <field name="res_model">freight.cost.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first cost line
+            </p>
+            <p>
+                Manage buy and sell costs for your freight shipments and quotations.
+            </p>
+        </field>
+    </record>
+
+    <!-- Quotation List View -->
+    <record id="view_freight_quotation_list" model="ir.ui.view">
+        <field name="name">freight.quotation.list</field>
+        <field name="model">freight.quotation</field>
+        <field name="arch" type="xml">
+            <list string="Quotations" default_order="create_date desc">
+                <field name="reference"/>
+                <field name="customer_id"/>
+                <field name="origin_port_id"/>
+                <field name="destination_port_id"/>
+                <field name="transport_mode"/>
+                <field name="state" decoration-info="state == 'draft'" 
+                       decoration-success="state == 'confirmed'"
+                       decoration-muted="state == 'expired'"
+                       widget="badge"/>
+                <field name="quotation_date"/>
+                <field name="validity_date"/>
+                <field name="total_amount" widget="monetary"/>
+                <field name="shipment_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Quotation Form View -->
+    <record id="view_freight_quotation_form" model="ir.ui.view">
+        <field name="name">freight.quotation.form</field>
+        <field name="model">freight.quotation</field>
+        <field name="arch" type="xml">
+            <form string="Quotation">
+                <header>
+                    <button name="action_confirm" string="Confirm Quotation" 
+                            type="object" class="oe_highlight" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_create_shipment" string="Create Shipment" 
+                            type="object" class="oe_highlight" 
+                            invisible="state != 'confirmed' or shipment_id"/>
+                    <button name="action_expire" string="Mark Expired" 
+                            type="object" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" 
+                            type="object" 
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="customer_info" string="Customer Information">
+                            <field name="customer_id" required="1"/>
+                            <field name="quotation_date"/>
+                            <field name="validity_date"/>
+                        </group>
+                        <group name="route_info" string="Route Information">
+                            <field name="origin_port_id" required="1"/>
+                            <field name="destination_port_id" required="1"/>
+                            <field name="transport_mode" required="1"/>
+                            <field name="service_type"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Cargo Details" name="cargo">
+                            <group>
+                                <group name="cargo_info" string="Cargo Information">
+                                    <field name="cargo_description"/>
+                                    <field name="estimated_weight"/>
+                                    <field name="estimated_volume"/>
+                                </group>
+                                <group name="shipment_info" string="Shipment Information">
+                                    <field name="shipment_id" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Cost Breakdown" name="costs">
+                            <field name="cost_line_ids">
+                                <list editable="bottom">
+                                    <field name="cost_category"/>
+                                    <field name="description"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="cost_type" invisible="1" default="sell"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="currency_id" invisible="1"/>
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="total_amount"/>
+                                </div>
+                                <field name="total_amount" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Terms &amp; Conditions" name="terms">
+                            <group>
+                                <field name="terms_conditions" placeholder="Terms and conditions for this quotation..."/>
+                            </group>
+                        </page>
+                        
+                        <page string="Notes" name="notes">
+                            <group>
+                                <field name="internal_notes" placeholder="Internal notes and comments..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Quotation Kanban View -->
+    <record id="view_freight_quotation_kanban" model="ir.ui.view">
+        <field name="name">freight.quotation.kanban</field>
+        <field name="model">freight.quotation</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="reference"/>
+                <field name="customer_id"/>
+                <field name="origin_port_id"/>
+                <field name="destination_port_id"/>
+                <field name="transport_mode"/>
+                <field name="state"/>
+                <field name="total_amount"/>
+                <field name="validity_date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="reference"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <span class="badge badge-pill" t-att-class="record.transport_mode.raw_value === 'air' ? 'badge-info' : record.transport_mode.raw_value === 'ocean' ? 'badge-primary' : 'badge-secondary'">
+                                            <field name="transport_mode"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="customer_id"/>
+                                    <br/>
+                                    <i class="fa fa-arrow-right"/> <field name="origin_port_id"/> → <field name="destination_port_id"/>
+                                    <br/>
+                                    <small class="text-muted">Valid until: <field name="validity_date"/></small>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="total_amount" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Quotation Search View -->
+    <record id="view_freight_quotation_search" model="ir.ui.view">
+        <field name="name">freight.quotation.search</field>
+        <field name="model">freight.quotation</field>
+        <field name="arch" type="xml">
+            <search string="Search Quotations">
+                <field name="reference"/>
+                <field name="customer_id"/>
+                <field name="origin_port_id"/>
+                <field name="destination_port_id"/>
+                <field name="cargo_description"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmed" name="filter_confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Expired" name="filter_expired" domain="[('state', '=', 'expired')]"/>
+                <separator/>
+                <filter string="Valid" name="filter_valid" domain="[('validity_date', '&gt;=', context_today())]"/>
+                <filter string="Expiring Soon" name="filter_expiring" domain="[('validity_date', '&lt;=', (context_today() + relativedelta(days=7)).strftime('%Y-%m-%d')), ('validity_date', '&gt;=', context_today())]"/>
+                <separator/>
+                <filter string="Air Freight" name="filter_air" domain="[('transport_mode', '=', 'air')]"/>
+                <filter string="Ocean Freight" name="filter_ocean" domain="[('transport_mode', '=', 'ocean')]"/>
+                <filter string="Land Freight" name="filter_land" domain="[('transport_mode', '=', 'land')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Customer" name="group_customer" context="{'group_by': 'customer_id'}"/>
+                    <filter string="Transport Mode" name="group_transport" context="{'group_by': 'transport_mode'}"/>
+                    <filter string="Quotation Date" name="group_quotation_date" context="{'group_by': 'quotation_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Quotation Action -->
+    <record id="action_freight_quotation" model="ir.actions.act_window">
+        <field name="name">Quotations</field>
+        <field name="res_model">freight.quotation</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_filter_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first quotation
+            </p>
+            <p>
+                Prepare and send quotations to your customers for freight services.
+                Track quotation status and convert confirmed quotations to shipments.
+            </p>
+        </field>
+    </record>
+
+</odoo>

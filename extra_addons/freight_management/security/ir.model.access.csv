@@ -9,3 +9,9 @@ access_freight_incoterm_user,freight.incoterm.user,model_freight_incoterm,base.g
 access_freight_incoterm_manager,freight.incoterm.manager,model_freight_incoterm,base.group_system,1,1,1,1
 access_freight_container_user,freight.container.user,model_freight_container,base.group_user,1,1,1,1
 access_freight_container_manager,freight.container.manager,model_freight_container,base.group_system,1,1,1,1
+access_freight_shipment_user,freight.shipment.user,model_freight_shipment,base.group_user,1,1,1,1
+access_freight_shipment_manager,freight.shipment.manager,model_freight_shipment,base.group_system,1,1,1,1
+access_freight_cost_line_user,freight.cost.line.user,model_freight_cost_line,base.group_user,1,1,1,1
+access_freight_cost_line_manager,freight.cost.line.manager,model_freight_cost_line,base.group_system,1,1,1,1
+access_freight_quotation_user,freight.quotation.user,model_freight_quotation,base.group_user,1,1,1,1
+access_freight_quotation_manager,freight.quotation.manager,model_freight_quotation,base.group_system,1,1,1,1
