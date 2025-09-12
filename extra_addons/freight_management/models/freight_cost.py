@@ -251,8 +251,9 @@ class FreightQuotation(models.Model):
             'origin_port_id': self.origin_port_id.id,
             'destination_port_id': self.destination_port_id.id,
             'transport_mode': self.transport_mode,
+            'direction': self.direction,
             'service_type': self.service_type,
-            'cargo_description': self.cargo_description,
+            'cargo_description': self.cargo_description or 'General Cargo',
             'total_weight': self.estimated_weight,
             'total_volume': self.estimated_volume,
             'state': 'booking'
