@@ -81,6 +81,11 @@ class FreightShipment(models.Model):
         ('ocean', 'Ocean Freight'),
         ('land', 'Land Freight')
     ], string='Transport Mode', required=True, tracking=True)
+    
+    direction = fields.Selection([
+        ('import', 'Import'),
+        ('export', 'Export')
+    ], string='Direction', required=True, tracking=True, help='Indicates whether this is an import or export shipment')
 
     # Service Information
     service_type = fields.Selection([

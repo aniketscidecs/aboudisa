@@ -77,6 +77,7 @@
                 <field name="origin_port_id"/>
                 <field name="destination_port_id"/>
                 <field name="transport_mode"/>
+                <field name="direction"/>
                 <field name="state" decoration-info="state == 'draft'" 
                        decoration-success="state == 'confirmed'"
                        decoration-muted="state == 'expired'"
@@ -126,6 +127,7 @@
                             <field name="origin_port_id" required="1"/>
                             <field name="destination_port_id" required="1"/>
                             <field name="transport_mode" required="1"/>
+                            <field name="direction" required="1"/>
                             <field name="service_type"/>
                         </group>
                     </group>

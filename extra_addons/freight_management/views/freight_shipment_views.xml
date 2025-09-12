@@ -12,6 +12,7 @@
                 <field name="origin_port_id"/>
                 <field name="destination_port_id"/>
                 <field name="transport_mode"/>
+                <field name="direction"/>
                 <field name="service_type"/>
                 <field name="state" decoration-info="state in ('draft', 'quotation')" 
                        decoration-warning="state in ('booking', 'documentation')"
@@ -75,6 +76,7 @@
                             <field name="origin_port_id" required="1"/>
                             <field name="destination_port_id" required="1"/>
                             <field name="transport_mode" required="1"/>
+                            <field name="direction" required="1"/>
                             <field name="service_type"/>
                             <field name="incoterm_id"/>
                         </group>

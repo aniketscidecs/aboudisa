@@ -145,6 +145,11 @@ class FreightQuotation(models.Model):
         ('land', 'Land Freight')
     ], string='Transport Mode', required=True)
     
+    direction = fields.Selection([
+        ('import', 'Import'),
+        ('export', 'Export')
+    ], string='Direction', required=True, tracking=True, help='Indicates whether this is an import or export quotation')
+    
     service_type = fields.Selection([
         ('fcl', 'Full Container Load (FCL)'),
         ('lcl', 'Less than Container Load (LCL)'),
