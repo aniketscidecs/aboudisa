@@ -216,6 +216,24 @@ class FreightShipment(models.Model):
         compute='_compute_total_costs',
         store=True
     )
+    
+    # Sale Order and Invoice Integration
+    quotation_id = fields.Many2one(
+        'freight.quotation',
+        string='Related Quotation',
+        readonly=True,
+        help='Quotation from which this shipment was created'
+    )
+    
+    sale_order_count = fields.Integer(
+        string='Sale Order Count',
+        compute='_compute_sale_order_count'
+    )
+    
+    invoice_count = fields.Integer(
+        string='Invoice Count',
+        compute='_compute_invoice_count'
+    )
 
     # Documents and Notes
     special_instructions = fields.Text(
@@ -328,3 +346,64 @@ class FreightShipment(models.Model):
         """Reset shipment to draft"""
         self.write({'state': 'draft'})
         return True
+    
+    @api.depends('quotation_id.sale_order_id')
+    def _compute_sale_order_count(self):
+        """Compute the number of sale orders related to this shipment"""
+        for record in self:
+            if record.quotation_id and record.quotation_id.sale_order_id:
+                record.sale_order_count = 1
+            else:
+                record.sale_order_count = 0
+    
+    @api.depends('quotation_id.sale_order_id')
+    def _compute_invoice_count(self):
+        """Compute the number of invoices related to this shipment"""
+        for record in self:
+            if record.quotation_id and record.quotation_id.sale_order_id:
+                # Count invoices from the related sale order
+                sale_order = record.quotation_id.sale_order_id
+                record.invoice_count = len(sale_order.invoice_ids.filtered(lambda inv: inv.move_type == 'out_invoice'))
+            else:
+                record.invoice_count = 0
+    
+    def action_view_sale_order(self):
+        """View related sale order through quotation"""
+        self.ensure_one()
+        if not self.quotation_id or not self.quotation_id.sale_order_id:
+            return {'type': 'ir.actions.act_window_close'}
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sale Order',
+            'res_model': 'sale.order',
+            'res_id': self.quotation_id.sale_order_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+    
+    def action_view_invoices(self):
+        """View related invoices through quotation"""
+        self.ensure_one()
+        if not self.quotation_id or not self.quotation_id.sale_order_id:
+            return {'type': 'ir.actions.act_window_close'}
+        
+        sale_order = self.quotation_id.sale_order_id
+        invoices = sale_order.invoice_ids.filtered(lambda inv: inv.move_type == 'out_invoice')
+        
+        if not invoices:
+            return {'type': 'ir.actions.act_window_close'}
+        
+        action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
+        if len(invoices) > 1:
+            action['domain'] = [('id', 'in', invoices.ids)]
+        elif len(invoices) == 1:
+            form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+            if 'views' in action:
+                action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            else:
+                action['views'] = form_view
+            action['res_id'] = invoices.id
+        else:
+            action = {'type': 'ir.actions.act_window_close'}
+        return action

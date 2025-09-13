@@ -266,9 +266,9 @@ class FreightQuotation(models.Model):
         help='Sale order created from this quotation'
     )
     
-    sale_order_count = fields.Integer(
+    order_count = fields.Integer(
         string='Sale Order Count',
-        compute='_compute_sale_order_count'
+        compute='_compute_order_count'
     )
     
     invoice_count = fields.Integer(
@@ -371,6 +371,7 @@ class FreightQuotation(models.Model):
             'cargo_description': self.cargo_description or 'General Cargo',
             'total_weight': self.estimated_weight,
             'total_volume': self.estimated_volume,
+            'quotation_id': self.id,  # Link shipment to quotation
             'state': 'booking'
         }
         
@@ -409,7 +410,7 @@ class FreightQuotation(models.Model):
         self.write({'state': 'draft'})
         return True
 
-    def action_cancel(self):
+    def cancel_quotation(self):
         """Cancel quotation"""
         self.write({'state': 'cancelled'})
         return True
@@ -428,7 +429,7 @@ class FreightQuotation(models.Model):
             'target': 'current'
         }
     
-    def action_view_invoices(self):
+    def action_view_invoice(self):
         """Smart button to view related invoices"""
         if not self.sale_order_id:
             return False
