@@ -34,6 +34,7 @@
         'security/ir.model.access.csv',
         'data/freight_data.xml',
         'data/freight_sequences.xml',
+        'data/freight_service_products.xml',
         'views/freight_port_views.xml',
         'views/freight_vessel_views.xml',
         'views/freight_airline_views.xml',
@@ -41,6 +42,7 @@
         'views/freight_container_views.xml',
         'views/freight_shipment_views.xml',
         'views/freight_cost_views.xml',
+        'views/sale_order_views.xml',
         'views/freight_menu.xml',
     ],
     'demo': [

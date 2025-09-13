@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Service Products for Freight Cost Categories -->
+        
+        <!-- Freight Charges Service Product -->
+        <record id="product_freight_charges" model="product.product">
+            <field name="name">Freight Charges</field>
+            <field name="default_code">FREIGHT-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Freight transportation charges for cargo shipment</field>
+        </record>
+
+        <!-- Documentation Service Product -->
+        <record id="product_documentation" model="product.product">
+            <field name="name">Documentation</field>
+            <field name="default_code">DOC-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Documentation and paperwork processing services</field>
+        </record>
+
+        <!-- Handling Charges Service Product -->
+        <record id="product_handling_charges" model="product.product">
+            <field name="name">Handling Charges</field>
+            <field name="default_code">HANDLE-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Cargo handling and loading/unloading services</field>
+        </record>
+
+        <!-- Insurance Service Product -->
+        <record id="product_insurance" model="product.product">
+            <field name="name">Insurance</field>
+            <field name="default_code">INS-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Cargo insurance coverage services</field>
+        </record>
+
+        <!-- Customs Clearance Service Product -->
+        <record id="product_customs_clearance" model="product.product">
+            <field name="name">Customs Clearance</field>
+            <field name="default_code">CUSTOMS-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Customs clearance and duty processing services</field>
+        </record>
+
+        <!-- Delivery Charges Service Product -->
+        <record id="product_delivery_charges" model="product.product">
+            <field name="name">Delivery Charges</field>
+            <field name="default_code">DELIVERY-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Final delivery and distribution services</field>
+        </record>
+
+        <!-- Storage/Demurrage Service Product -->
+        <record id="product_storage_demurrage" model="product.product">
+            <field name="name">Storage/Demurrage</field>
+            <field name="default_code">STORAGE-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Storage and demurrage charges</field>
+        </record>
+
+        <!-- Fuel Surcharge Service Product -->
+        <record id="product_fuel_surcharge" model="product.product">
+            <field name="name">Fuel Surcharge</field>
+            <field name="default_code">FUEL-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Fuel surcharge and energy cost adjustments</field>
+        </record>
+
+        <!-- Security Charges Service Product -->
+        <record id="product_security_charges" model="product.product">
+            <field name="name">Security Charges</field>
+            <field name="default_code">SECURITY-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Security screening and protection services</field>
+        </record>
+
+        <!-- Other Charges Service Product -->
+        <record id="product_other_charges" model="product.product">
+            <field name="name">Other Charges</field>
+            <field name="default_code">OTHER-001</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="list_price">0.0</field>
+            <field name="standard_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">True</field>
+            <field name="invoice_policy">order</field>
+            <field name="description">Miscellaneous charges and additional services</field>
+        </record>
+
+    </data>
+</odoo>

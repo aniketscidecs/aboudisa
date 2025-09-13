@@ -30,18 +30,21 @@ class FreightCostLine(models.Model):
         ('buy', 'Buy Cost (Vendor)')
     ], string='Cost Type', required=True, default='sell')
     
-    cost_category = fields.Selection([
-        ('freight', 'Freight Charges'),
-        ('documentation', 'Documentation'),
-        ('handling', 'Handling Charges'),
-        ('insurance', 'Insurance'),
-        ('customs', 'Customs Clearance'),
-        ('delivery', 'Delivery Charges'),
-        ('storage', 'Storage/Demurrage'),
-        ('fuel', 'Fuel Surcharge'),
-        ('security', 'Security Charges'),
-        ('other', 'Other Charges')
-    ], string='Cost Category', required=True)
+    product_id = fields.Many2one(
+        'product.product',
+        string='Service Product',
+        required=False,  # Temporarily non-required for migration
+        domain=[('type', '=', 'service')],
+        help='Service product representing this cost category'
+    )
+    
+    product_uom_id = fields.Many2one(
+        'uom.uom',
+        string='Unit of Measure',
+        related='product_id.uom_id',
+        store=True,
+        readonly=True
+    )
     
     description = fields.Char(
         string='Description',
@@ -92,6 +95,49 @@ class FreightCostLine(models.Model):
     def _compute_invoiced(self):
         for line in self:
             line.invoiced = bool(line.invoice_line_id)
+    
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        """Update description and unit price when product is selected"""
+        if self.product_id:
+            self.description = self.product_id.name
+            if self.cost_type == 'sell':
+                self.unit_price = self.product_id.list_price
+            else:
+                self.unit_price = self.product_id.standard_price
+    
+    @api.onchange('quantity', 'unit_price')
+    def _onchange_quantity_unit_price(self):
+        """Calculate amount when quantity or unit price changes"""
+        self.amount = self.quantity * self.unit_price
+    
+    def _migrate_cost_category_to_product(self):
+        """Migration method to convert cost_category to product_id"""
+        # Get all cost lines without product_id
+        cost_lines = self.search([('product_id', '=', False)])
+        
+        # Default service product mapping
+        default_product = self.env.ref('freight_management.product_other_charges', raise_if_not_found=False)
+        if not default_product:
+            # Create a default service product if it doesn't exist
+            default_product = self.env['product.product'].create({
+                'name': 'Freight Service',
+                'type': 'service',
+                'sale_ok': True,
+                'purchase_ok': True,
+                'list_price': 0.0,
+                'standard_price': 0.0,
+            })
+        
+        # Update cost lines with default product
+        for line in cost_lines:
+            line.write({
+                'product_id': default_product.id,
+                'quantity': 1.0,
+                'unit_price': line.amount or 0.0,
+            })
+        
+        return True
 
 
 class FreightQuotation(models.Model):
@@ -211,6 +257,25 @@ class FreightQuotation(models.Model):
         readonly=True
     )
     
+    # Sales Integration
+    sale_order_id = fields.Many2one(
+        'sale.order',
+        string='Sale Order',
+        readonly=True,
+        copy=False,
+        help='Sale order created from this quotation'
+    )
+    
+    sale_order_count = fields.Integer(
+        string='Sale Order Count',
+        compute='_compute_sale_order_count'
+    )
+    
+    invoice_count = fields.Integer(
+        string='Invoice Count',
+        compute='_compute_invoice_count'
+    )
+    
     terms_conditions = fields.Text(
         string='Terms and Conditions'
     )
@@ -229,6 +294,17 @@ class FreightQuotation(models.Model):
     def _compute_total_amount(self):
         for record in self:
             record.total_amount = sum(record.cost_line_ids.mapped('amount'))
+    
+    def _compute_sale_order_count(self):
+        for record in self:
+            record.sale_order_count = 1 if record.sale_order_id else 0
+    
+    def _compute_invoice_count(self):
+        for record in self:
+            if record.sale_order_id:
+                record.invoice_count = len(record.sale_order_id.invoice_ids)
+            else:
+                record.invoice_count = 0
 
     def action_send_quotation(self):
         """Send quotation to customer"""
@@ -236,9 +312,48 @@ class FreightQuotation(models.Model):
         return True
 
     def action_confirm(self):
-        """Confirm quotation"""
-        self.write({'state': 'confirmed'})
-        return True
+        """Confirm quotation and create sale order"""
+        if not self.cost_line_ids:
+            raise ValidationError(_("Cannot confirm quotation without cost lines."))
+        
+        # Create sale order
+        sale_order_vals = {
+            'partner_id': self.customer_id.id,
+            'date_order': fields.Datetime.now(),
+            'validity_date': self.validity_date,
+            'origin': self.reference,
+            'note': self.terms_conditions,
+            'freight_quotation_id': self.id,
+        }
+        
+        sale_order = self.env['sale.order'].create(sale_order_vals)
+        
+        # Create sale order lines from cost lines
+        for cost_line in self.cost_line_ids.filtered(lambda l: l.cost_type == 'sell'):
+            sale_line_vals = {
+                'order_id': sale_order.id,
+                'product_id': cost_line.product_id.id,
+                'name': cost_line.description or cost_line.product_id.name,
+                'product_uom_qty': cost_line.quantity,
+                'product_uom': cost_line.product_uom_id.id,
+                'price_unit': cost_line.unit_price,
+            }
+            self.env['sale.order.line'].create(sale_line_vals)
+        
+        # Update quotation
+        self.write({
+            'state': 'confirmed',
+            'sale_order_id': sale_order.id
+        })
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sale Order',
+            'res_model': 'sale.order',
+            'res_id': sale_order.id,
+            'view_mode': 'form',
+            'target': 'current'
+        }
     
     def action_create_shipment(self):
         """Create shipment from confirmed quotation"""
@@ -266,8 +381,10 @@ class FreightQuotation(models.Model):
             self.env['freight.cost.line'].create({
                 'shipment_id': shipment.id,
                 'cost_type': 'sell',
-                'cost_category': line.cost_category,
+                'product_id': line.product_id.id,
                 'description': line.description,
+                'quantity': line.quantity,
+                'unit_price': line.unit_price,
                 'amount': line.amount,
                 'partner_id': self.customer_id.id
             })
@@ -296,3 +413,45 @@ class FreightQuotation(models.Model):
         """Cancel quotation"""
         self.write({'state': 'cancelled'})
         return True
+    
+    def action_view_sale_order(self):
+        """Smart button to view related sale order"""
+        if not self.sale_order_id:
+            return False
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sale Order',
+            'res_model': 'sale.order',
+            'res_id': self.sale_order_id.id,
+            'view_mode': 'form',
+            'target': 'current'
+        }
+    
+    def action_view_invoices(self):
+        """Smart button to view related invoices"""
+        if not self.sale_order_id:
+            return False
+        
+        invoices = self.sale_order_id.invoice_ids
+        if not invoices:
+            return False
+        
+        if len(invoices) == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Invoice',
+                'res_model': 'account.move',
+                'res_id': invoices.id,
+                'view_mode': 'form',
+                'target': 'current'
+            }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Invoices',
+                'res_model': 'account.move',
+                'domain': [('id', 'in', invoices.ids)],
+                'view_mode': 'list,form',
+                'target': 'current'
+            }

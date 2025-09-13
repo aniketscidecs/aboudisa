@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sale Order Form View Extension -->
+    <record id="view_order_form_freight" model="ir.ui.view">
+        <field name="name">sale.order.form.freight</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_freight_quotation" type="object" 
+                        class="oe_stat_button" icon="fa-ship"
+                        invisible="not freight_quotation_id">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Freight</span>
+                        <span class="o_stat_text">Quotation</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="freight_quotation_id" readonly="1" 
+                       invisible="not freight_quotation_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

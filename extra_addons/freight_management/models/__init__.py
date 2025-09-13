@@ -5,3 +5,4 @@ from . import freight_incoterm
 from . import freight_container
 from . import freight_shipment
 from . import freight_cost
+from . import sale_order

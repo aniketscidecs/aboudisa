@@ -120,8 +120,11 @@
                             <field name="cost_line_ids">
                                 <list editable="bottom">
                                     <field name="cost_type"/>
-                                    <field name="cost_category"/>
+                                    <field name="product_id" required="1"/>
                                     <field name="description"/>
+                                    <field name="quantity" default="1.0"/>
+                                    <field name="product_uom_id" invisible="1"/>
+                                    <field name="unit_price" widget="monetary"/>
                                     <field name="amount" widget="monetary"/>
                                     <field name="currency_id" invisible="1"/>
                                     <field name="partner_id" invisible="cost_type != 'buy'"/>
